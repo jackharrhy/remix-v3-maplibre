@@ -2,8 +2,25 @@
   "name": "remix-v3-maplibre",
   "version": "0.1.0",
   "description": "playing around with maplibre & remix v3",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "NODE_ENV=development tsx watch server.ts",
+    "dev:browser": "esbuild app/assets/*.tsx --outbase=app/assets --outdir=public/assets --bundle --minify --splitting --format=esm --entry-names='[dir]/[name]' --chunk-names='chunks/[name]-[hash]' --sourcemap --watch",
+    "start": "tsx server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remix-run/dom": "jam",
+    "@remix-run/events": "jam",
+    "@remix-run/fetch-router": "^0.6.0",
+    "@remix-run/headers": "^0.13.0",
+    "@remix-run/lazy-file": "^3.5.0",
+    "@remix-run/node-fetch-server": "^0.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "esbuild": "^0.25.10",
+    "tsx": "^4.20.6"
   },
   "keywords": [],
   "author": "Jack Arthur Harrhy (me@jackharrhy.com)",

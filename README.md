@@ -1,4 +1,3 @@
 # remix-v3-maplibre
 
 Playing around with Remix v3 and Maplibre.
-
