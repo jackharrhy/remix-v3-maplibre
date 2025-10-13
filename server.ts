@@ -11,7 +11,7 @@ let server = http.createServer(
       console.error(error);
       return new Response("Internal Server Error", { status: 500 });
     }
-  }),
+  })
 );
 
 let port = process.env.PORT ? parseInt(process.env.PORT, 10) : 44100;
