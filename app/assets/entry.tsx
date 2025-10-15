@@ -1,26 +1,40 @@
-import { createFrame } from "@remix-run/dom";
+import { connect, createRoot, type Remix } from "@remix-run/dom";
+import { press } from "@remix-run/events/press";
+import maplibregl from "maplibre-gl";
 
-createFrame(document, {
-  async loadModule(moduleUrl, name) {
-    let mod = await import(moduleUrl);
-    if (!mod) {
-      throw new Error(`Unknown module: ${moduleUrl}#${name}`);
-    }
+function App(this: Remix.Handle) {
+  let map: maplibregl.Map | null = null;
 
-    let Component = mod[name];
-    if (!Component) {
-      throw new Error(`Unknown component: ${moduleUrl}#${name}`);
-    }
+  return () => {
+    return (
+      <div
+        on={[
+          connect((event) => {
+            console.log("in the connect scope");
+            map = new maplibregl.Map({
+              container: event.currentTarget,
+              style: "https://demotiles.maplibre.org/globe.json",
+              center: [0, 0],
+              zoom: 1,
+            });
 
-    return Component;
-  },
+            console.log("map created", map);
+          }),
+          press(() => {
+            console.log("clicked");
+          }),
+        ]}
+      >
+        map component
+      </div>
+    );
+  };
+}
 
-  async resolveFrame(frameUrl) {
-    let res = await fetch(frameUrl);
-    if (res.ok) {
-      return res.text();
-    }
+const rootEl = document.getElementById("root");
 
-    throw new Error(`Failed to fetch ${frameUrl}`);
-  },
-});
+if (!rootEl) {
+  throw new Error("Root element not found");
+}
+
+createRoot(rootEl).render(<App />);

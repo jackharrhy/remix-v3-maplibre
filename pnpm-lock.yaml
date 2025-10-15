@@ -31,7 +31,7 @@ importers:
         version: 5.9.0
     devDependencies:
       '@types/node':
-        specifier: ^24.6.0
+        specifier: ^24.7.2
         version: 24.7.2
       esbuild:
         specifier: ^0.25.10
