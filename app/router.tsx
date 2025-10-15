@@ -26,6 +26,10 @@ router.map(routes.home, () =>
           async
           src={routes.assets.href({ path: "entry.js" })}
         />
+        <link
+          rel="stylesheet"
+          href={routes.assets.href({ path: "entry.css" })}
+        />
         <style innerHTML={``} />
       </head>
       <body>

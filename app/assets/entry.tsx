@@ -1,32 +1,83 @@
 import { connect, createRoot, type Remix } from "@remix-run/dom";
-import { press } from "@remix-run/events/press";
 import maplibregl from "maplibre-gl";
+
+import "maplibre-gl/dist/maplibre-gl.css";
+import "./style.css";
+import type { EventDescriptor } from "@remix-run/events";
+
+const stJohnsLatLon = {
+  lat: 47.560539,
+  lon: -52.71283,
+};
+
+function invariant(condition: unknown, message: string): asserts condition {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
 
 function App(this: Remix.Handle) {
   let map: maplibregl.Map | null = null;
+  let popup: HTMLDivElement | null = null;
+
+  const setupMap = (container: HTMLDivElement) => {
+    map = new maplibregl.Map({
+      container,
+      style: "https://demotiles.maplibre.org/globe.json",
+      center: [stJohnsLatLon.lon, stJohnsLatLon.lat],
+      zoom: 1,
+    });
+
+    map.on("move", () => {
+      positionPopup();
+    });
+  };
+
+  const positionPopup = () => {
+    invariant(map, "Map is not initialized");
+    invariant(popup, "Popup is not initialized");
+
+    const position = map.project(stJohnsLatLon);
+    popup.style.left = `${position.x}px`;
+    popup.style.top = `${position.y}px`;
+  };
 
   return () => {
     return (
-      <div
-        on={[
-          connect((event) => {
-            console.log("in the connect scope");
-            map = new maplibregl.Map({
-              container: event.currentTarget,
-              style: "https://demotiles.maplibre.org/globe.json",
-              center: [0, 0],
-              zoom: 1,
-            });
-
-            console.log("map created", map);
-          }),
-          press(() => {
-            console.log("clicked");
-          }),
-        ]}
-      >
-        map component
-      </div>
+      <>
+        <div
+          css={{
+            display: "flex",
+            width: "100%",
+            height: "100%",
+          }}
+          on={[
+            connect((event) => {
+              setupMap(event.currentTarget);
+            }),
+          ]}
+        />
+        <div
+          css={{
+            position: "absolute",
+            zIndex: 1,
+            pointerEvents: "none",
+            touchAction: "none",
+            backgroundColor: "white",
+            padding: "0.5rem",
+            borderRadius: "0.25rem",
+            boxShadow: "0 0 0.5rem 0 rgba(0, 0, 0, 0.1)",
+          }}
+          on={[
+            connect((event) => {
+              popup = event.currentTarget;
+              positionPopup();
+            }),
+          ]}
+        >
+          St. John's, NL!
+        </div>
+      </>
     );
   };
 }
