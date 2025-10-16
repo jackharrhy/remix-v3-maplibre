@@ -19,6 +19,7 @@ function invariant(condition: unknown, message: string): asserts condition {
 function App(this: Remix.Handle) {
   let map: maplibregl.Map | null = null;
   let popup: HTMLDivElement | null = null;
+  let position: maplibregl.Point | null = null;
 
   const setupMap = (container: HTMLDivElement) => {
     map = new maplibregl.Map({
@@ -37,9 +38,8 @@ function App(this: Remix.Handle) {
     invariant(map, "Map is not initialized");
     invariant(popup, "Popup is not initialized");
 
-    const position = map.project(stJohnsLatLon);
-    popup.style.left = `${position.x}px`;
-    popup.style.top = `${position.y}px`;
+    position = map.project(stJohnsLatLon);
+    this.update();
   };
 
   return () => {
@@ -67,6 +67,10 @@ function App(this: Remix.Handle) {
             padding: "0.5rem",
             borderRadius: "0.25rem",
             boxShadow: "0 0 0.5rem 0 rgba(0, 0, 0, 0.1)",
+          }}
+          style={{
+            left: `${position?.x ?? 0}px`,
+            top: `${position?.y ?? 0}px`,
           }}
           on={[
             connect((event) => {
